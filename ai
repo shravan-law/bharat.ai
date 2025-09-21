@@ -1,0 +1,39 @@
+Section 2(a): "Contract is an agreement enforceable by law."
+Section 10: "All agreements are contracts if they are made by the free consent of parties competent to contract, for a lawful consideration and with a lawful object."
+...
+import openai
+import streamlit as st
+
+# Load your Indian Contract Act text
+with open("data/contract_law.txt", "r", encoding="utf-8") as f:
+    contract_law_text = f.read()
+
+# OpenAI API key
+openai.api_key = "YOUR_OPENAI_API_KEY"
+
+def ask_contract_bot(question):
+    prompt = f"""
+    You are a helpful assistant specialized in the Indian Contract Act 1872.
+    Use the following content to answer user questions:
+
+    {contract_law_text}
+
+    Question: {question}
+    Answer in clear, concise language with reference to sections if applicable.
+    """
+    
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=prompt,
+        temperature=0.2,
+        max_tokens=500
+    )
+    return response.choices[0].text.strip()
+
+# Streamlit UI
+st.title("Indian Contract Act Chatbot")
+user_question = st.text_input("Ask a question about the Indian Contract Act:")
+
+if user_question:
+    answer = ask_contract_bot(user_question)
+    st.write(answer)
